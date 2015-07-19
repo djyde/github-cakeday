@@ -1,0 +1,65 @@
+<html><head><title>Github Cakeday</title><script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js"></script><script src="//cdnjs.cloudflare.com/ajax/libs/superagent/1.2.0/superagent.min.js"></script><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css"/><style>body{
+  padding-top: 64px;
+}
+.center{
+  text-align: center;
+}
+input{
+  outline: none;
+  padding: 6px 12px;
+  font-size: 16px;
+  text-align: center;
+  border: 1px solid #d5d5d5;
+  border-right: 0;
+  border-radius: 6px 0 0 6px;
+}
+
+.btn{
+  padding: 7px 12px;
+  text-decoration: none;
+  color: #fff;
+  border: 0;
+  background-color: #60b044;
+  font-size: 16px;
+  border-radius: 0 6px 6px 0;
+  //- margin-left: 12px;
+}
+
+.info{
+  margin-top: 64px;
+  font-size: 14px;
+}</style></head><body><h2 class="center">See what Github looked like on the day you joined</h2><div class="center"><input id="github-id" type="text" placeholder="Your Github ID"/><a href="javascript:void(0)" id="go" class="btn">Go!</a><div class="info"><p>Inspired by <a href="http://i.puthtml.com/revgeorge/cakeday">a similar tool for Reddit</a> and <a href="http://bemmu.github.io/hncakeday/">a similar tool for Hackernews</a></p><p>If you like this, please consider <a href="https://archive.org/donate/index.php">donating to the Internet Archive</a></p><a href="https://github.com/djyde/github-cakeday">Open Source</a></div></div><script>var btn = document.querySelector('#go');
+var isRequesting = false;
+var request = function(){
+  if(!isRequesting){
+    isRequesting = true;
+    var githubId = document.querySelector('#github-id').value;
+    btn.textContent = 'Loading...';
+    btn.style.backgroundColor = '#8add6d';
+    superagent
+      .get('https://api.github.com/users/' + githubId)
+      .end(function(err,res){
+        if(err){
+          alert(err.response);
+          btn.textContent = 'Go!';
+          btn.style.cursor = 'pointer';
+          btn.style.backgroundColor = '#60b044';
+          isRequesting = false;
+          console.log(err);
+        } else {
+          btn.textContent = 'Going...';
+          btn.style.cursor = 'default';
+          console.log(moment(res.body.created_at).format('YYYYMMDD'));
+          window.location = 'https://web.archive.org/web/' + moment(res.body.created_at).format('YYYYMMDDhhmmss') + '/https://github.com/';
+        }
+      })
+  }
+}
+btn.addEventListener('click',function(){
+  request();
+})
+document.querySelector('#github-id').addEventListener('keydown',function(e){
+  if(e.keyCode == 13){
+    request();
+  }
+})</script></body></html>
