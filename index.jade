@@ -62,12 +62,12 @@ html
             .get('https://api.github.com/users/' + githubId)
             .end(function(err,res){
               if(err){
-                alert(err.response);
+                alert(res.body.message);
                 btn.textContent = 'Go!';
                 btn.style.cursor = 'pointer';
                 btn.style.backgroundColor = '#60b044';
                 isRequesting = false;
-                console.log(err);
+                console.log(res.body.message);
               } else {
                 btn.textContent = 'Going...';
                 btn.style.cursor = 'default';
